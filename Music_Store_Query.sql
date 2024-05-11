@@ -1,5 +1,3 @@
-/*	Question Set 1 - Easy */
-
 /* Q1: Who is the senior most employee based on job title? */
 
 SELECT title, last_name, first_name 
@@ -45,11 +43,7 @@ ORDER BY total_spending DESC
 LIMIT 1;
 
 
-
-
-/* Question Set 2 - Moderate */
-
-/* Q1: Write query to return the email, first name, last name, & Genre of all Rock Music listeners. 
+/* Q6: Write query to return the email, first name, last name, & Genre of all Rock Music listeners. 
 Return your list ordered alphabetically by email starting with A. */
 
 /*Method 1 */
@@ -78,7 +72,7 @@ WHERE genre.name LIKE 'Rock'
 ORDER BY email;
 
 
-/* Q2: Let's invite the artists who have written the most rock music in our dataset. 
+/* Q7: Let's invite the artists who have written the most rock music in our dataset. 
 Write a query that returns the Artist name and total track count of the top 10 rock bands. */
 
 SELECT artist.artist_id, artist.name,COUNT(artist.artist_id) AS number_of_songs
@@ -92,28 +86,18 @@ ORDER BY number_of_songs DESC
 LIMIT 10;
 
 
-/* Q3: Return all the track names that have a song length longer than the average song length. 
+/* Q8: Return all the track names that have a song length longer than the average song length. 
 Return the Name and Milliseconds for each track. Order by the song length with the longest songs listed first. */
 
-SELECT name,miliseconds
+SELECT name,milLiseconds
 FROM track
-WHERE miliseconds > (
-	SELECT AVG(miliseconds) AS avg_track_length
+WHERE milLiseconds > (
+	SELECT AVG(milLiseconds) AS avg_track_length
 	FROM track )
-ORDER BY miliseconds DESC;
+ORDER BY milLiseconds DESC;
 
 
-
-
-/* Question Set 3 - Advance */
-
-/* Q1: Find how much amount spent by each customer on artists? Write a query to return customer name, artist name and total spent */
-
-/* Steps to Solve: First, find which artist has earned the most according to the InvoiceLines. Now use this artist to find 
-which customer spent the most on this artist. For this query, you will need to use the Invoice, InvoiceLine, Track, Customer, 
-Album, and Artist tables. Note, this one is tricky because the Total spent in the Invoice table might not be on a single product, 
-so you need to use the InvoiceLine table to find out how many of each product was purchased, and then multiply this by the price
-for each artist. */
+/* Q9: Find how much amount spent by each customer on artists? Write a query to return customer name, artist name and total spent */
 
 WITH best_selling_artist AS (
 	SELECT artist.artist_id AS artist_id, artist.name AS artist_name, SUM(invoice_line.unit_price*invoice_line.quantity) AS total_sales
@@ -136,11 +120,9 @@ GROUP BY 1,2,3,4
 ORDER BY 5 DESC;
 
 
-/* Q2: We want to find out the most popular music Genre for each country. We determine the most popular genre as the genre 
+/* Q10: We want to find out the most popular music Genre for each country. We determine the most popular genre as the genre 
 with the highest amount of purchases. Write a query that returns each country along with the top Genre. For countries where 
 the maximum number of purchases is shared return all Genres. */
-
-/* Steps to Solve:  There are two parts in question- first most popular music genre and second need data at country level. */
 
 /* Method 1: Using CTE */
 
@@ -183,11 +165,9 @@ JOIN max_genre_per_country ON sales_per_country.country = max_genre_per_country.
 WHERE sales_per_country.purchases_per_genre = max_genre_per_country.max_genre_number;
 
 
-/* Q3: Write a query that determines the customer that has spent the most on music for each country. 
+/* Q11: Write a query that determines the customer that has spent the most on music for each country. 
 Write a query that returns the country along with the top customer and how much they spent. 
 For countries where the top amount spent is shared, provide all customers who spent this amount. */
-
-/* Steps to Solve:  Similar to the above question. There are two parts in question- 
 first find the most spent on music for each country and second filter the data for respective customers. */
 
 /* Method 1: using CTE */
@@ -225,6 +205,15 @@ WHERE cc.total_spending = ms.max_spending
 ORDER BY 1;
 
 
-/* source: www.youtube.com/@RishabhMishraOfficial */
+/*Q12: Which customers have made the highest number of purchases and spent the most in total at our music store?*/
 
-/* Thank You :) */
+
+SELECT c.first_name || ' ' || c.last_name AS customer_name, 
+       COUNT(*) AS total_purchases,
+       SUM(il.unit_price) AS total_spent
+FROM customer c
+INNER JOIN invoice i ON c.customer_id = i.customer_id
+INNER JOIN invoice_line il ON i.invoice_id = il.invoice_id
+GROUP BY c.customer_id
+ORDER BY total_spent DESC
+LIMIT 10;
